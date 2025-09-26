@@ -23,10 +23,16 @@
       h1{margin:0;font-size:20px;color:#fff}
       p.lead{color:rgba(234,240,255,0.85);margin:8px 0 18px;font-size:13px}
 
-      .form-row{display:flex;flex-direction:column;gap:10px}
-      label{font-size:12px;color:rgba(234,240,255,0.7)}
-      input[type="email"],input[type="password"]{padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff;outline:none}
-      input::placeholder{color:rgba(255,255,255,0.35)}
+  .form-row{display:flex;flex-direction:column;gap:10px}
+  label{font-size:12px;color:rgba(234,240,255,0.85)}
+  /* stronger, higher-contrast input styles for visibility */
+  input[type="email"],input[type="password"]{padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.06);color:#fff;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03)}
+  input:focus{border-color:rgba(107,140,255,0.95);box-shadow:0 0 0 4px rgba(107,140,255,0.12)}
+  input::placeholder{color:rgba(255,255,255,0.6)}
+  /* password toggle */
+  .password-wrap{position:relative;display:flex;align-items:center}
+  .password-wrap .toggle-pass{position:absolute;right:8px;background:transparent;border:none;color:rgba(255,255,255,0.85);padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px}
+  .password-wrap .toggle-pass:focus{outline:2px solid rgba(107,140,255,0.9);outline-offset:2px}
 
       .actions{display:flex;gap:10px;margin-top:14px}
       .btn{flex:1;padding:11px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#4aa1ff);color:#06203a;font-weight:700;cursor:pointer}
@@ -62,7 +68,10 @@
 
           <div>
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="••••••••" required />
+            <div class="password-wrap">
+              <input id="password" name="password" type="password" placeholder="••••••••" required aria-describedby="toggle-password" />
+              <button type="button" class="toggle-pass" id="toggle-password" aria-pressed="false" aria-label="Show password">Show</button>
+            </div>
           </div>
         </div>
 
@@ -99,6 +108,20 @@
 
       function updateOnline(){document.getElementById('status').textContent = navigator.onLine ? 'online' : 'offline'}
       window.addEventListener('online',updateOnline);window.addEventListener('offline',updateOnline);updateOnline();
+
+      // show/hide password toggle
+      (function(){
+        const pass = document.getElementById('password');
+        const btn = document.getElementById('toggle-password');
+        if(!pass || !btn) return;
+        btn.addEventListener('click', ()=>{
+          const isHidden = pass.type === 'password';
+          pass.type = isHidden ? 'text' : 'password';
+          btn.textContent = isHidden ? 'Hide' : 'Show';
+          btn.setAttribute('aria-pressed', String(isHidden));
+          btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        });
+      })();
     </script>
   </body>
 </html>
