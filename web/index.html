@@ -6,48 +6,47 @@
     <title>Sign In — Traffic Tickets</title>
     <style>
       :root{
-        --bg1:#0f1724;--bg2:#07203a;--glass: rgba(255,255,255,0.06);--accent:#6b8cff;
-        --muted:rgba(255,255,255,0.75);
+        --bg-dark-1:#071028;--bg-dark-2:#04203d;--card-bg:#ffffff;--text:#0b1a2b;--muted:rgba(11,26,43,0.6);--accent:#2f80ff;
       }
       html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial}
-      body{background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--muted);display:flex;align-items:center;justify-content:center;padding:32px}
+      body{background:linear-gradient(180deg,var(--bg-dark-1),var(--bg-dark-2));color:var(--muted);display:flex;align-items:center;justify-content:center;padding:32px}
 
-      /* subtle animated blobs in the background */
-      .bg-blob{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
-      .blob{position:absolute;border-radius:50%;filter:blur(72px);opacity:0.6;mix-blend-mode:screen}
-      .b1{width:520px;height:520px;background:#3b82f6;left:-10%;top:-20%;}
-      .b2{width:420px;height:420px;background:#7c3aed;right:-8%;bottom:-10%;}
+      /* removed glass/backdrop-filter and animated blobs to ensure solid, high-contrast panels */
+      .card{width:420px;max-width:96%;background:var(--card-bg);border:1px solid rgba(11,26,43,0.06);border-radius:14px;padding:28px;box-shadow:0 8px 24px rgba(11,26,43,0.06);color:var(--text)}
 
-      .card{width:420px;max-width:96%;background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));-webkit-backdrop-filter: blur(10px) saturate(120%);backdrop-filter: blur(10px) saturate(120%);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;box-shadow:0 8px 30px rgba(2,6,23,0.6);color:#eaf0ff}
+      h1{margin:0;font-size:20px;color:var(--text)}
+      p.lead{color:var(--muted);margin:8px 0 18px;font-size:13px}
 
-      h1{margin:0;font-size:20px;color:#fff}
-      p.lead{color:rgba(234,240,255,0.85);margin:8px 0 18px;font-size:13px}
-
-      .form-row{display:flex;flex-direction:column;gap:10px}
-      label{font-size:12px;color:rgba(234,240,255,0.7)}
-      input[type="email"],input[type="password"]{padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff;outline:none}
-      input::placeholder{color:rgba(255,255,255,0.35)}
+  .form-row{display:flex;flex-direction:column;gap:10px}
+  label{font-size:13px;color:var(--text);display:block;margin-bottom:6px}
+  /* fully visible, high-contrast input styles */
+  input[type="email"],input[type="password"]{
+    padding:12px 14px;border-radius:8px;border:1px solid rgba(11,26,43,0.12);background:#ffffff;color:var(--text);outline:none;box-shadow:inset 0 1px 0 rgba(0,0,0,0.03);font-weight:600
+  }
+  input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(11,92,255,0.08)}
+  input::placeholder{color:rgba(11,26,43,0.45);font-weight:400}
+  /* password toggle */
+  .password-wrap{position:relative;display:flex;align-items:center}
+  .password-wrap .toggle-pass{position:absolute;right:8px;background:transparent;border:none;color:var(--accent);padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12px}
+  .password-wrap .toggle-pass:focus{outline:2px solid rgba(11,92,255,0.18);outline-offset:2px}
 
       .actions{display:flex;gap:10px;margin-top:14px}
-      .btn{flex:1;padding:11px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#4aa1ff);color:#06203a;font-weight:700;cursor:pointer}
-      .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .btn{flex:1;padding:11px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#2ea1ff);color:#fff;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid rgba(11,26,43,0.06);color:var(--muted)}
 
       .sso{display:flex;gap:8px;margin-top:14px}
-      .sso button{flex:1;padding:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);color:var(--muted);cursor:pointer}
+  .sso button{flex:1;padding:10px;border-radius:10px;background:#f2f6fb;border:1px solid rgba(11,26,43,0.04);color:var(--text);cursor:pointer}
 
-      .meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:rgba(234,240,255,0.6);font-size:13px}
-      .muted{color:rgba(234,240,255,0.55);font-size:13px}
+  .meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:rgba(11,26,43,0.5);font-size:13px}
+  .muted{color:rgba(11,26,43,0.45);font-size:13px}
 
-      footer{position:fixed;bottom:18px;left:18px;font-size:12px;color:rgba(255,255,255,0.35)}
+  footer{position:fixed;bottom:18px;left:18px;font-size:12px;color:rgba(11,26,43,0.35)}
 
       @media (max-width:480px){.card{padding:20px}}
     </style>
   </head>
   <body>
-    <div class="bg-blob" aria-hidden="true">
-      <div class="blob b1"></div>
-      <div class="blob b2"></div>
-    </div>
+    <!-- background blobs removed for solid high contrast UI -->
 
     <main class="card" role="main" aria-labelledby="signin-title">
       <h1 id="signin-title">Sign in to Traffic Tickets</h1>
@@ -62,7 +61,10 @@
 
           <div>
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="••••••••" required />
+            <div class="password-wrap">
+              <input id="password" name="password" type="password" placeholder="••••••••" required aria-describedby="toggle-password" />
+              <button type="button" class="toggle-pass" id="toggle-password" aria-pressed="false" aria-label="Show password">Show</button>
+            </div>
           </div>
         </div>
 
@@ -99,72 +101,21 @@
 
       function updateOnline(){document.getElementById('status').textContent = navigator.onLine ? 'online' : 'offline'}
       window.addEventListener('online',updateOnline);window.addEventListener('offline',updateOnline);updateOnline();
+
+      // show/hide password toggle
+      (function(){
+        const pass = document.getElementById('password');
+        const btn = document.getElementById('toggle-password');
+        if(!pass || !btn) return;
+        btn.addEventListener('click', ()=>{
+          const isHidden = pass.type === 'password';
+          pass.type = isHidden ? 'text' : 'password';
+          btn.textContent = isHidden ? 'Hide' : 'Show';
+          btn.setAttribute('aria-pressed', String(isHidden));
+          btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        });
+      })();
     </script>
   </body>
 </html>
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Traffic Tickets — Home</title>
-    <style>
-      body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f7fb}
-      .card{background:#fff;padding:28px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);width:360px;max-width:92%}
-      h1{margin:0 0 12px;font-size:20px}
-      .actions{display:flex;flex-direction:column;gap:10px;margin-top:14px}
-      button{padding:12px;border-radius:8px;border:0;background:#0b5fff;color:#fff;font-weight:600;cursor:pointer}
-      .secondary{background:#eef2ff;color:#0b5fff}
-      .profile{display:flex;align-items:center;gap:10px;margin-top:12px}
-      .offline{color:#b23; font-size:13px;margin-top:10px}
-      /* sign-in styles */
-      .signin-column{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-      .signin-input{padding:10px;border-radius:8px;border:1px solid #ddd}
-      .signin-row{margin-top:10px;display:flex;gap:8px}
-      .profile .name{font-weight:600}
-    </style>
-  </head>
-  <body>
-    <main class="card" role="main">
-      <h1>Traffic Tickets</h1>
-      <p>Welcome — sign in to access your profile and start issuing or managing tickets.</p>
 
-      <form id="signin" onsubmit="event.preventDefault();alert('Sign in placeholder')">
-        <div class="signin-column">
-          <input id="email" type="email" placeholder="Email" class="signin-input" required />
-          <input id="password" type="password" placeholder="Password" class="signin-input" required />
-          <button type="submit">Sign In</button>
-        </div>
-      </form>
-
-      <div class="signin-row">
-        <button id="sso" class="secondary">Sign in with SSO</button>
-        <button id="quick" class="secondary">Device Quick-Login</button>
-      </div>
-
-      <div class="actions">
-        <button id="create">Create Ticket</button>
-        <button id="view" class="secondary">View Tickets</button>
-        <button id="scan" class="secondary">Scan Plate (Mobile)</button>
-      </div>
-
-      <div class="profile">
-        <img src="https://via.placeholder.com/40" alt="avatar" class="avatar" />
-        <div>
-          <div class="name">Guest</div>
-          <a href="#signin">Sign in / Profile</a>
-        </div>
-      </div>
-
-      <div class="offline" id="offline" hidden>Offline: limited functionality</div>
-    </main>
-
-    <script>
-      document.getElementById('create').addEventListener('click',()=>alert('Navigate to Create Ticket'))
-      document.getElementById('view').addEventListener('click',()=>alert('Navigate to View Tickets'))
-      document.getElementById('scan').addEventListener('click',()=>alert('Scan Plate available on mobile'))
-      function updateOnline(){document.getElementById('offline').hidden=navigator.onLine}
-      window.addEventListener('online',updateOnline);window.addEventListener('offline',updateOnline);updateOnline()
-    </script>
-  </body>
-</html>
