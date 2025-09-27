@@ -6,10 +6,10 @@
     <title>Sign In — Traffic Tickets</title>
     <style>
       :root{
-        --bg:#f5f7fb;--card-bg:#ffffff;--text:#0b1a2b;--muted:rgba(11,26,43,0.6);--accent:#0b5fff;
+        --bg-dark-1:#071028;--bg-dark-2:#04203d;--card-bg:#ffffff;--text:#0b1a2b;--muted:rgba(11,26,43,0.6);--accent:#2f80ff;
       }
       html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial}
-      body{background:var(--bg);color:var(--muted);display:flex;align-items:center;justify-content:center;padding:32px}
+      body{background:linear-gradient(180deg,var(--bg-dark-1),var(--bg-dark-2));color:var(--muted);display:flex;align-items:center;justify-content:center;padding:32px}
 
       /* removed glass/backdrop-filter and animated blobs to ensure solid, high-contrast panels */
       .card{width:420px;max-width:96%;background:var(--card-bg);border:1px solid rgba(11,26,43,0.06);border-radius:14px;padding:28px;box-shadow:0 8px 24px rgba(11,26,43,0.06);color:var(--text)}
@@ -31,16 +31,16 @@
   .password-wrap .toggle-pass:focus{outline:2px solid rgba(11,92,255,0.18);outline-offset:2px}
 
       .actions{display:flex;gap:10px;margin-top:14px}
-      .btn{flex:1;padding:11px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#4aa1ff);color:#06203a;font-weight:700;cursor:pointer}
-      .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .btn{flex:1;padding:11px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#2ea1ff);color:#fff;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid rgba(11,26,43,0.06);color:var(--muted)}
 
       .sso{display:flex;gap:8px;margin-top:14px}
-      .sso button{flex:1;padding:10px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);color:var(--muted);cursor:pointer}
+  .sso button{flex:1;padding:10px;border-radius:10px;background:#f2f6fb;border:1px solid rgba(11,26,43,0.04);color:var(--text);cursor:pointer}
 
-      .meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:rgba(234,240,255,0.6);font-size:13px}
-      .muted{color:rgba(234,240,255,0.55);font-size:13px}
+  .meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:rgba(11,26,43,0.5);font-size:13px}
+  .muted{color:rgba(11,26,43,0.45);font-size:13px}
 
-      footer{position:fixed;bottom:18px;left:18px;font-size:12px;color:rgba(255,255,255,0.35)}
+  footer{position:fixed;bottom:18px;left:18px;font-size:12px;color:rgba(11,26,43,0.35)}
 
       @media (max-width:480px){.card{padding:20px}}
     </style>
