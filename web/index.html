@@ -34,11 +34,29 @@
   .btn{flex:1;padding:11px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#2ea1ff);color:#fff;font-weight:700;cursor:pointer}
   .btn.ghost{background:transparent;border:1px solid rgba(11,26,43,0.06);color:var(--muted)}
 
-      .sso{display:flex;gap:8px;margin-top:14px}
-  .sso button{flex:1;padding:10px;border-radius:10px;background:#f2f6fb;border:1px solid rgba(11,26,43,0.04);color:var(--text);cursor:pointer}
+      .sso{display:flex;gap:8px;margin-top:20px}
+  .sso button{flex:1;padding:11px;border-radius:10px;background:#f2f6fb;border:1px solid rgba(11,26,43,0.08);color:var(--text);cursor:pointer;font-weight:600;transition:transform .12s ease,box-shadow .12s ease}
+  .sso button:hover,.sso button:focus-visible{transform:translateY(-1px);box-shadow:0 8px 16px rgba(11,26,43,0.08);outline:none}
+  .sso button:active{transform:translateY(0)}
+  .sso button[data-provider="google"]{background:#ffffff}
+  .sso button .label{display:block;font-size:13px;font-weight:500;color:rgba(11,26,43,0.6)}
+
+  .quick-hint{margin-top:10px;font-size:12px;color:rgba(11,26,43,0.55)}
+
+  .status-message{margin-top:18px;padding:14px;border-radius:12px;background:#f2f6fb;border:1px solid rgba(11,26,43,0.08);color:var(--text);font-size:13px;display:none}
+  .status-message strong{display:block;font-size:12px;color:rgba(11,26,43,0.6);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em}
+  .status-message[data-state="active"]{display:block}
+  .status-message[data-variant="pending"]{border-color:rgba(47,128,255,0.45);background:#e8f1ff}
+  .status-message[data-variant="success"]{border-color:rgba(45,181,93,0.35);background:#eefbf2}
+      .status-message[data-variant="warning"]{border-color:rgba(255,171,64,0.45);background:#fff4e6}
+  .status-message[data-variant="error"]{border-color:rgba(211,47,47,0.45);background:#ffe8e8}
 
   .meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:rgba(11,26,43,0.5);font-size:13px}
   .muted{color:rgba(11,26,43,0.45);font-size:13px}
+  .help-links{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .help-links span{color:rgba(11,26,43,0.35)}
+  .help-links a{color:var(--accent);text-decoration:none;font-weight:600}
+  .help-links a:hover,.help-links a:focus-visible{text-decoration:underline;outline:none}
 
   footer{position:fixed;bottom:18px;left:18px;font-size:12px;color:rgba(11,26,43,0.35)}
 
@@ -75,13 +93,35 @@
       </form>
 
       <div class="sso" role="group" aria-label="alternative sign in options">
-        <button onclick="onSSO('google')">Sign in with Google</button>
-        <button onclick="onSSO('agency')">Agency SSO</button>
-        <button onclick="onQuick()">Device Quick-Login</button>
+        <button type="button" data-provider="google" onclick="onSSO('google')">
+          Sign in with Google
+          <span class="label">Use agency Google Workspace</span>
+        </button>
+        <button type="button" data-provider="agency" onclick="onSSO('agency')">
+          Agency SSO
+          <span class="label">Redirect to trusted IdP</span>
+        </button>
+        <button type="button" data-provider="quick" onclick="onQuick()">
+          Device Quick-Login
+          <span class="label">Biometric / secure PIN</span>
+        </button>
+      </div>
+      <div class="quick-hint" id="quick-hint">Quick-Login becomes available after an initial verified sign-in on this device.</div>
+
+      <div class="status-message" id="auth-status" role="status" aria-live="polite">
+        <strong>Auth status</strong>
+        <span id="auth-status-text">Choose a sign-in option to begin.</span>
       </div>
 
       <div class="meta" id="login-desc">
-        <div class="muted">Need help? Contact your agency IT.</div>
+        <div class="muted help-links">
+          <span>Need help?</span>
+          <a href="support/create-ticket.html">Create a ticket</a>
+          <span aria-hidden="true">|</span>
+          <a href="support/chat.html">Chat with support</a>
+          <span aria-hidden="true">|</span>
+          <a href="tel:+18005550123">Call IT desk</a>
+        </div>
         <div class="muted">Offline: <span id="status">online</span></div>
       </div>
     </main>
@@ -89,18 +129,97 @@
     <footer>Prototype — UI only</footer>
 
     <script>
-      function onSignIn(){
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('password').value;
-        if(!email || !pass){alert('Please enter credentials');return}
-        alert('Sign-in placeholder for: ' + email);
-      }
-      function onGuest(){alert('Continue as Guest (placeholder)')}
-      function onSSO(provider){alert('Start SSO flow for: ' + provider)}
-      function onQuick(){alert('Device Quick-Login placeholder — bind device first')}
+      const statusCard = document.getElementById('auth-status');
+      const statusText = document.getElementById('auth-status-text');
+      const quickHint = document.getElementById('quick-hint');
+      const statusIndicator = document.getElementById('status');
 
-      function updateOnline(){document.getElementById('status').textContent = navigator.onLine ? 'online' : 'offline'}
-      window.addEventListener('online',updateOnline);window.addEventListener('offline',updateOnline);updateOnline();
+      function setStatus(message, variant = 'info'){
+        if(!statusCard || !statusText) return;
+        statusText.textContent = message;
+        statusCard.dataset.state = 'active';
+        statusCard.dataset.variant = variant;
+        const heading = statusCard.querySelector('strong');
+        if(heading){
+          heading.textContent =
+            variant === 'success' ? 'Success' :
+            variant === 'warning' ? 'Heads up' :
+            variant === 'error' ? 'Problem' :
+            variant === 'pending' ? 'Working...' :
+            'Auth status';
+        }
+      }
+
+      function simulateAuthFlow({pending, success, variant = 'success', delay = 750}){
+        setStatus(pending, 'pending');
+        setTimeout(()=>setStatus(success, variant), delay);
+      }
+
+      function openSetup(path){
+        if(!path) return false;
+        const target = window.open(path, '_blank', 'noopener,noreferrer');
+        return !!target;
+      }
+
+      function onSignIn(){
+        const email = document.getElementById('email').value.trim();
+        const pass = document.getElementById('password').value;
+        if(!email || !pass){
+          setStatus('Please provide both email and password to proceed.', 'warning');
+          return;
+        }
+        simulateAuthFlow({
+          pending:`Verifying credentials for ${email}...`,
+          success:`Email/password placeholder complete. Connect this form to your auth API to finish sign-in for ${email}.`
+        });
+      }
+      function onGuest(){
+        setStatus('Guest access is limited. Enable guest or kiosk mode in admin settings before exposing this path.', 'warning');
+      }
+      function onSSO(provider){
+        const label = provider === 'google' ? 'Google Workspace SSO' : 'Agency Identity Provider';
+        const setupPath = provider === 'google' ? 'setup/google.html' : 'setup/agency-sso.html';
+        setStatus(`Opening ${label} setup instructions...`, 'pending');
+        const opened = openSetup(setupPath);
+        if(opened){
+          setStatus(`${label} setup instructions opened in a new tab. Finish configuration, then wire up the redirect in your auth service.`, 'success');
+        }else{
+          setStatus(`Popup blocked. Open ${setupPath} manually to review the ${label} setup steps.`, 'error');
+        }
+        if(quickHint){
+          quickHint.textContent = provider === 'google'
+            ? 'After completing Google SSO once, officers can enable Device Quick-Login on this device.'
+            : 'Agency SSO establishes trust so Device Quick-Login can be enabled during first login.';
+        }
+      }
+      function onQuick(){
+        const hasCredentialsAPI = typeof navigator !== 'undefined' && ('credentials' in navigator || 'authentication' in navigator);
+        const opened = openSetup('setup/device-quick-login.html');
+        if(opened){
+          setStatus(hasCredentialsAPI
+            ? 'Device Quick-Login guide opened. Connect to WebAuthn, FIDO2, or native biometric APIs to complete implementation.'
+            : 'Device Quick-Login guide opened. Implement secure credential storage and biometric prompts for your target platform.', hasCredentialsAPI ? 'success' : 'warning');
+          if(quickHint){
+            quickHint.textContent = 'Device Quick-Login remains active on this device until it is revoked from Profile settings.';
+          }
+        }else{
+          setStatus('Popup blocked. Open setup/device-quick-login.html manually to review the binding flow.', 'error');
+        }
+      }
+
+      function updateOnline(){
+        if(statusIndicator){
+          statusIndicator.textContent = navigator.onLine ? 'online' : 'offline';
+        }
+        if(!navigator.onLine){
+          setStatus('Offline mode detected. Sign-in flows are paused until connection returns.', 'warning');
+        }
+      }
+
+      setStatus('Choose a sign-in option to begin.');
+      window.addEventListener('online',updateOnline);
+      window.addEventListener('offline',updateOnline);
+      updateOnline();
 
       // show/hide password toggle
       (function(){

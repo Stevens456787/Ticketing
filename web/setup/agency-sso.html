@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Configure Agency SSO</title>
+    <style>
+      body{font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;background:#f5f7fb;color:#0b1a2b;margin:0;padding:40px}
+      main{max-width:720px;margin:0 auto;background:#ffffff;padding:32px;border-radius:16px;box-shadow:0 12px 32px rgba(11,26,43,0.08);border:1px solid rgba(11,26,43,0.08)}
+      h1{margin-top:0;font-size:26px}
+      p{color:rgba(11,26,43,0.75);line-height:1.6}
+      ol{padding-left:20px;line-height:1.6}
+      li{margin-bottom:12px}
+      .note{margin-top:24px;padding:16px;background:#eefbf2;border-radius:12px;border:1px solid rgba(45,181,93,0.25)}
+      a{color:#2f80ff;text-decoration:none;font-weight:600}
+      a:hover,a:focus-visible{text-decoration:underline;outline:none}
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Configure Agency SSO</h1>
+      <p>Connect your internal identity provider using SAML 2.0 or OIDC. These steps outline the information Traffic Tickets expects from your IdP.</p>
+      <ol>
+        <li>In your IdP admin portal, create a new application named <strong>Traffic Tickets</strong> and assign it to the officers and clerks who should have access.</li>
+        <li>Set the ACS/redirect URL to <code>https://app.your-agency.gov/auth/sso/callback</code> (adjust for staging if needed).</li>
+        <li>Export the IdP metadata XML (or discovery document for OIDC) and upload it to the Traffic Tickets admin console.</li>
+        <li>Map attributes: <code>email</code>, <code>given_name</code>, <code>family_name</code>, and a custom <code>role</code> attribute indicating officer, clerk, or administrator.</li>
+        <li>Perform a test sign-in in staging. Once verified, enable the SSO toggle for production deployments.</li>
+      </ol>
+      <div class="note">
+        Remember to document your contact in the agency IT department so outages in the IdP can be escalated quickly.
+      </div>
+      <p><a href="../index.html">Back to sign-in preview</a></p>
+    </main>
+  </body>
+</html>
