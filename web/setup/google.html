@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Configure Sign in with Google</title>
+    <style>
+      body{font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;background:#f5f7fb;color:#0b1a2b;margin:0;padding:40px}
+      main{max-width:720px;margin:0 auto;background:#ffffff;padding:32px;border-radius:16px;box-shadow:0 12px 32px rgba(11,26,43,0.08);border:1px solid rgba(11,26,43,0.08)}
+      h1{margin-top:0;font-size:26px}
+      p{color:rgba(11,26,43,0.75);line-height:1.6}
+      ol{padding-left:20px;line-height:1.6}
+      li{margin-bottom:12px}
+      .note{margin-top:24px;padding:16px;background:#eef2fb;border-radius:12px;border:1px solid rgba(47,128,255,0.25)}
+      a{color:#2f80ff;text-decoration:none;font-weight:600}
+      a:hover,a:focus-visible{text-decoration:underline;outline:none}
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Configure Sign in with Google</h1>
+      <p>Use your agency Google Workspace tenant to enable OAuth2 sign-in for the Traffic Tickets app. Follow these setup tasks in the Google Cloud console.</p>
+      <ol>
+        <li>Create an OAuth client ID for a web application in the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer">Google Cloud Credentials</a> dashboard.</li>
+        <li>Add the Traffic Tickets redirect URI (e.g., <code>https://app.your-agency.gov/auth/google/callback</code>) to the authorized redirect URIs list.</li>
+        <li>Enable the "Google People API" so the app can fetch basic profile data after sign-in.</li>
+        <li>Download the client ID and secret, store them in your secure secrets manager, and configure the backend auth service to use them.</li>
+        <li>Return to the login page and toggle the "Sign in with Google" button to active once your backend deployment is complete.</li>
+      </ol>
+      <div class="note">
+        Tip: If you enforce device quick-login, remind officers to complete one Google SSO flow on each new device before enabling the biometric shortcut.
+      </div>
+      <p><a href="../index.html">Back to sign-in preview</a></p>
+    </main>
+  </body>
+</html>
